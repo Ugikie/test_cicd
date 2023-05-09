@@ -1,0 +1,33 @@
+name: Development Branch
+
+concurrency:
+  group: development
+  cancel-in-progress: false
+
+on:
+  push:
+    branches: [development]
+
+jobs:
+  Apply:
+    if: "!contains(github.event.head_commit.message, 'no actions')"
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+
+      - name: Install semantic-release plugins
+        run: npm i -D @semantic-release/git @semantic-release/changelog
+
+      - name: Semantic Release
+        run: npx semantic-release -b development -p @semantic-release/commit-analyzer -p @semantic-release/release-notes-generator -p @semantic-release/changelog -p @semantic-release/git -p @semantic-release/github
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

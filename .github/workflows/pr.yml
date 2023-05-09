@@ -1,0 +1,17 @@
+name: PR CICD
+
+on:
+  pull_request:
+    branches: [development]
+
+jobs:
+  CICD:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
